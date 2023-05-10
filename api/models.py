@@ -27,22 +27,28 @@ class User(db.Model):
     first_name = db.Column(db.String(120), nullable=False)
     last_name = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120), nullable=False)
-    resumes = db.relationship('Resume', secondary=user_resumes, lazy='subquery', backref=db.backref('user_resumes', lazy=True))
-    roles = db.relationship('Role', secondary=roles_users, lazy=True, backref=db.backref('users', lazy=True))
+    # resumes = db.relationship('Resume', secondary=user_resumes, lazy='subquery', backref=db.backref('user_resumes', lazy=True))
+    roles = db.relationship('Role', secondary=roles_users, lazy='subquery', backref=db.backref('user_roles', lazy=True))
     is_admin = db.Column(db.Boolean, default=False)
 
-    def __init__(self,email,password,first_name,last_name,phone,roles,active=True,is_admin=False):
-        self.email = email
-        self.password = generate_password_hash(password)
-        self.active = active
-        self.first_name = first_name
-        self.last_name = last_name
-        self.phone = phone
-        if not roles:
-            self.roles = []
-        else:
-            self.roles = roles
-        self.is_admin = is_admin
+    # def __init__(self,email,password,first_name,last_name,phone,roles=None,active=True,is_admin=False):
+    #     self.email = email
+    #     self.password = generate_password_hash(password)
+    #     self.active = active
+    #     self.first_name = first_name
+    #     self.last_name = last_name
+    #     # self.resumes = resumes
+    #     # if not resumes:
+    #     #     self.resumes = []
+    #     # else:
+    #     #     self.resumes = resumes
+
+    #     self.phone = phone
+    #     if not roles:
+    #         self.roles = []
+    #     else:
+    #         self.roles = roles
+    #     self.is_admin = is_admin
 
 class Role(db.Model):
     __tablename__ = 'roles'
