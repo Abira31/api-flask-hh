@@ -1,0 +1,288 @@
+openapi: 3.0.3
+info:
+  title: 'hh'
+  description: 'Базовый аналог hh'
+  version: 1.0.0
+servers:
+  - url: 'http://127.0.0.1:5000/api/v1/'
+tags:
+  - name: Role
+    description: 'Операции, связанными с ролями'
+  - name: Skills
+    description: 'Операции, связанными с навыками'
+  - name: Vacancy
+    description: 'Операции, связанными с вакансиями'
+paths:
+  /role:
+    get:
+      tags:
+        - Role
+      summary: 'Список всех ролей'
+      description: 'Получаем список ролей'
+      operationId: getRoles
+      responses:
+        "200":
+          description: 'Список ролей'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Role"
+    post:
+      tags:
+        - Role
+      summary: 'Создание роли'
+      description: 'Отправляем запрос для создания новой роли'
+      operationId: saveRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/RoleDetail"
+      responses:
+        '201':
+          description: 'Роль успешна создана'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+        '400':
+          description: 'Ошибка в создание роли'
+  /role/{roleId} :
+    get:
+      tags:
+        - Role
+      summary: 'Информация о роли'
+      description: 'Получить информацию о выбранной роли'
+      operationId: getRole
+      parameters:
+        - name: roleId
+          description: 'Идентификатор роли'
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Сведения о роли'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/RoleDetail"
+        204:
+          description: 'Роль с таким идентификатором id отсутсвует'
+    put:
+      tags:
+        - Role
+      summary: 'Обновить роль'
+      description: 'Обновить информацию о выбранной роли'
+      operationId: updateRole
+      parameters:
+        - name: roleId
+          description: 'Идентификатор роли'
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+           application/json:
+             schema:
+               $ref: "#components/schemas/RoleDetail"
+      responses:
+        '200':
+          description: 'Роль успешна обновлена'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+        '400':
+          description: 'Ошибка в обновлений роли'
+
+    delete:
+      tags:
+        - Role
+      summary: 'Удалить роль'
+      description: 'Удалить выбранную роль'
+      operationId: deleteRole
+      parameters:
+        - name: roleId
+          description: 'Идентификатор роли'
+          in: path
+          required: true
+      responses:
+        '200':
+          description: 'Роль удалена'
+        '204':
+          description: 'Роль для удоления не найдена'
+  /skills:
+    get:
+      tags:
+        - Skills
+      summary: 'Список всех навыков'
+      description: 'Получаем список навыков'
+      operationId: getSkills
+      responses:
+        '200':
+          description: 'Список навыков'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Skills"
+    post:
+      tags:
+        - Skills
+      summary: 'Создание навыков'
+      description: 'Отправляем запрос для создания нового навыка'
+      operationId: saveSkill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/SkillDetail"
+      responses:
+        '201':
+          description: 'Навык успешно создан'
+          content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   id:
+                    type: integer
+                   name:
+                    type: string
+        '400':
+             description: 'Ошибка в создание навыка'
+  /skills/{skillId}:
+    get:
+      tags:
+        - Skills
+      summary: 'Информация о навыке'
+      description: 'Получить информацию о выбранном навыке'
+      operationId: getSkill
+      parameters:
+        - name: skillId
+          description: 'Идентификатор навыка'
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Сведения о навыках'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/SkillDetail"
+        '204':
+          description: 'Навык с таким идентификатором id отсутсвует'
+    put:
+      tags:
+        - Skills
+      summary: 'Обновить навык'
+      description: 'Обновить информацию о выбранном навыке'
+      operationId: updateSkill
+      parameters:
+        - name: skillId
+          description: 'Идентификатор навыка'
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/SkillDetail"
+      responses:
+        '200':
+          description: 'Роль успешна обновлена'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+        '400':
+          description: 'Ошибка в обновление навыка'
+    delete:
+      tags:
+        - Skills
+      summary: 'Удалить роль'
+      description: 'Удалить выбранную роль'
+      operationId: deleteSkill
+      parameters:
+        - name: skillId
+          description: 'Идентификатор навыка'
+          in: path
+          required: true
+      responses:
+        '200':
+          description: 'Навык удален'
+        '204':
+          description: 'Навык для удоления не найден'
+
+
+components:
+  schemas:
+    Role:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+    RoleDetail:
+      type: object
+      properties:
+        name:
+          type: string
+    Skills:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+    SkillDetail:
+      type: object
+      properties:
+        name:
+          type: string
+    Vacancy:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+    VacancyDetail:
+      type: object
+      properties:
+        name:
+          type: string
+#  securitySchemes:
+#    BasicAuth:
+#      type: http
+#      scheme: basic
+#    BearerAuth:
+#      type: http
+#      scheme: header
+#      bearerFormat: JWT

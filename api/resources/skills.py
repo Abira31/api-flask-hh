@@ -78,7 +78,7 @@ class SkillsAPI(Resource):
             return [],204
         db.session.delete(skills_db)
         db.session.commit()
-        return [],204
+        return [],200
 
 
 

@@ -77,7 +77,7 @@ class RoleAPI(Resource):
             return [],204
         db.session.delete(role_db)
         db.session.commit()
-        return [],204
+        return [],200
 
 
 
