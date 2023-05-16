@@ -4,3 +4,4 @@ Flask-Migrate
 flask-restful
 pydantic
 flask-swagger-ui
+flask-jwt-extended
