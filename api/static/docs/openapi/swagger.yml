@@ -6,6 +6,10 @@ info:
 servers:
   - url: 'http://127.0.0.1:5000/api/v1/'
 tags:
+  - name: User
+    description: 'Операции, связанными с пользователем'
+  - name: Jwt
+    description: 'Операции, связанными с jwt'
   - name: Role
     description: 'Операции, связанными с ролями'
   - name: Skills
@@ -13,8 +17,103 @@ tags:
   - name: Vacancy
     description: 'Операции, связанными с вакансиями'
 paths:
+  /user:
+    post:
+      tags:
+        - User
+      summary: 'Создание пользователя'
+      description: 'Отправляем запрос для создания нового пользователя'
+      operationId: saveUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/UserCreate"
+      responses:
+        201:
+          description: 'Пользователь успешно создан'
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Получаем пользователя'
+      description: 'Отправляем запрос для получения пользователя'
+      operationId: getUser
+      responses:
+        '200':
+          description: 'Получение пользователя'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UserDetail"
+  /user/role:
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Устанавливаем роли доступа для пользователя'
+      description: 'Отправляем запрос для записи роли'
+      operationId: SaveUserRoles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                roles:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '201':
+          description: 'Роли успешно добавлены'
+
+  /jwt/create:
+    post:
+      tags:
+        - Jwt
+      summary: 'Создание токена'
+      description: 'Отправляем запрос для создания токена jwt'
+      operationId: CreateJwt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: 'Получение jwt токена'
+  /jwt/refresh:
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Jwt
+      summary: 'Обновление токена'
+      description: 'Отправляем запрос для обновления токена jwt'
+      operationId: RefreshJwt
+      responses:
+        '200':
+          description: 'Получение нового jwt токена'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
   /role:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Role
       summary: 'Список всех ролей'
@@ -28,6 +127,8 @@ paths:
               schema:
                 $ref: "#components/schemas/Role"
     post:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Role
       summary: 'Создание роли'
@@ -54,6 +155,8 @@ paths:
           description: 'Ошибка в создание роли'
   /role/{roleId} :
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Role
       summary: 'Информация о роли'
@@ -76,6 +179,8 @@ paths:
         204:
           description: 'Роль с таким идентификатором id отсутсвует'
     put:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Role
       summary: 'Обновить роль'
@@ -106,8 +211,9 @@ paths:
                     type: string
         '400':
           description: 'Ошибка в обновлений роли'
-
     delete:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Role
       summary: 'Удалить роль'
@@ -278,11 +384,43 @@ components:
       properties:
         name:
           type: string
-#  securitySchemes:
-#    BasicAuth:
-#      type: http
-#      scheme: basic
-#    BearerAuth:
-#      type: http
-#      scheme: header
-#      bearerFormat: JWT
+    UserCreate:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone:
+          type: string
+    UserDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        roles:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,6 +1,7 @@
 from . import db
 from werkzeug.security import generate_password_hash
 from sqlalchemy.sql import func
+from api import jwt
 roles_users = db.Table(
     'roles_users',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
@@ -70,6 +71,20 @@ class Vacancy(db.Model):
     is_active = db.Column(db.Boolean(), nullable=False)
     publication_date = db.Column(db.DateTime(timezone=True), default=func.now())
 
+    def __init__(self,name,description,resumes=None,is_active=True,publication_date=func.now()):
+        self.name = name
+        self.description = description
+        if not resumes:
+            self.resumes = []
+        else:
+            self.resumes = resumes
+        self.is_active = is_active
+        self.publication_date = publication_date
+
+
+
+
+
 
 class Skills(db.Model):
     __tablename__ = 'skills'
@@ -84,3 +99,8 @@ class Resume(db.Model):
     publication_date = db.Column(db.DateTime(timezone=True),default=func.now())
     is_active = db.Column(db.Boolean(), nullable=False)
 
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return db.session.query(User).filter_by(email=identity).first()

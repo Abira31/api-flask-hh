@@ -13,6 +13,8 @@ migrate = Migrate(app,db)
 api = Api(app,prefix='/api/v1')
 jwt = JWTManager(app)
 
+
+
 SWAGGER_URL = '/api/docs'
 API_URL = '/static/docs/openapi/swagger.yml'
 

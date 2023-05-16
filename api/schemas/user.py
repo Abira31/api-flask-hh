@@ -1,25 +1,21 @@
 from pydantic import BaseModel
 from api.schemas.role import RolesBase
-
+from api.schemas.resumes import ResumesBase
 class UserBase(BaseModel):
-    id : int
     email : str
+    password : str
     first_name : str
     last_name : str
     phone : str
-    roles: list[RolesBase]
     class Config:
         orm_mode = True
 
 
-class UserDetailBase(BaseModel):
-    email: str
-    is_active: bool
-    first_name: str
-    last_name: str
-    phone: str
-    roles: list[RolesBase]
+class UserDetailBase(UserBase):
+    id : int
+    is_active : bool
+    roles : list[RolesBase]
+    resumes : list[ResumesBase]
     is_admin: bool
 
-    class Config:
-        orm_mode = True
+

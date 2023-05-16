@@ -4,8 +4,11 @@ from api import db
 from flask import jsonify,request,make_response
 from api.schemas.skills import SkillsBase,SkillsDetailBase
 from pydantic import ValidationError
-
+from flask_jwt_extended import jwt_required
+from api.core.permission import is_admin
 class SkillsAPI(Resource):
+    @jwt_required()
+    @is_admin()
     def get(self,id=None):
         if not id:
             skills_db = db.session.query(Skills).all()
@@ -26,7 +29,8 @@ class SkillsAPI(Resource):
         )
         response.headers["Content-Type"] = "application/json"
         return response
-
+    @jwt_required()
+    @is_admin()
     def post(self):
         try:
             skills = SkillsDetailBase.parse_obj(request.json)
@@ -47,7 +51,8 @@ class SkillsAPI(Resource):
         )
         response.headers["Content-Type"] = "application/json"
         return response
-
+    @jwt_required()
+    @is_admin()
     def put(self,id):
         skills_db = db.session.query(Skills).filter_by(id=id).first()
         if not skills_db:
@@ -71,7 +76,8 @@ class SkillsAPI(Resource):
         )
         response.headers["Content-Type"] = "application/json"
         return response
-
+    @jwt_required()
+    @is_admin()
     def delete(self,id):
         skills_db = db.session.query(Skills).filter_by(id=id).first()
         if not skills_db:

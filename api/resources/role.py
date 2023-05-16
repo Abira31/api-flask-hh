@@ -4,8 +4,11 @@ from api import db
 from flask import jsonify,request,make_response
 from api.schemas.role import RolesBase,RoleDetailBase
 from pydantic import ValidationError
-
+from flask_jwt_extended import jwt_required
+from api.core.permission import is_admin
 class RoleAPI(Resource):
+    @jwt_required()
+    @is_admin()
     def get(self,id=None):
         if not id:
             roles_db = db.session.query(Role).all()
@@ -27,6 +30,8 @@ class RoleAPI(Resource):
         response.headers["Content-Type"] = "application/json"
         return response
 
+    @jwt_required()
+    @is_admin()
     def post(self):
         try:
             role = RoleDetailBase.parse_obj(request.json)
@@ -48,6 +53,8 @@ class RoleAPI(Resource):
         response.headers["Content-Type"] = "application/json"
         return response
 
+    @jwt_required()
+    @is_admin()
     def put(self,id):
         role_db = db.session.query(Role).filter_by(id=id).first()
         if not role_db:
@@ -71,6 +78,8 @@ class RoleAPI(Resource):
         response.headers["Content-Type"] = "application/json"
         return response
 
+    @jwt_required()
+    @is_admin()
     def delete(self,id):
         role_db = db.session.query(Role).filter_by(id=id).first()
         if not role_db:
