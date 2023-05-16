@@ -3,10 +3,10 @@ roles = [
     {"name":'работодатель'}
 ]
 vacancys = [
-    {"name":"python программист"},
-    {"name":"sql программист"},
-    {"name":"php программист"},
-    {"name":"1с программист"},
+    {"name":"python программист","description":"программист"},
+    {"name":"sql программист","description":"программист"},
+    {"name":"php программист","description":"программист"},
+    {"name":"1с программист","description":"программист"},
 ]
 
 skills = [

@@ -18,6 +18,12 @@ user_resumes = db.Table(
     db.Column('resume_id', db.Integer, db.ForeignKey('resume.id'), primary_key=True)
 )
 
+vacancy_resumes = db.Table(
+    'vacancy_resumes',
+    db.Column('vacancy_id', db.Integer, db.ForeignKey('vacancy.id'), primary_key=True),
+    db.Column('resume_id', db.Integer, db.ForeignKey('resume.id'), primary_key=True)
+)
+
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -27,38 +33,43 @@ class User(db.Model):
     first_name = db.Column(db.String(120), nullable=False)
     last_name = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120), nullable=False)
-    # resumes = db.relationship('Resume', secondary=user_resumes, lazy='subquery', backref=db.backref('user_resumes', lazy=True))
+    resumes = db.relationship('Resume', secondary=user_resumes, lazy='subquery', backref=db.backref('user_resumes', lazy=True))
     roles = db.relationship('Role', secondary=roles_users, lazy='subquery', backref=db.backref('user_roles', lazy=True))
     is_admin = db.Column(db.Boolean, default=False)
 
-    # def __init__(self,email,password,first_name,last_name,phone,roles=None,active=True,is_admin=False):
-    #     self.email = email
-    #     self.password = generate_password_hash(password)
-    #     self.active = active
-    #     self.first_name = first_name
-    #     self.last_name = last_name
-    #     # self.resumes = resumes
-    #     # if not resumes:
-    #     #     self.resumes = []
-    #     # else:
-    #     #     self.resumes = resumes
-
-    #     self.phone = phone
-    #     if not roles:
-    #         self.roles = []
-    #     else:
-    #         self.roles = roles
-    #     self.is_admin = is_admin
+    def __init__(self,email,password,first_name,last_name,phone,is_active=True,resumes=None,roles=None,is_admin=False):
+        self.email = email
+        self.password = generate_password_hash(password)
+        self.is_active = is_active
+        self.first_name = first_name
+        self.last_name = last_name
+        self.phone = phone
+        if not resumes:
+            self.resumes = []
+        else:
+            self.resumes = resumes
+        if not roles:
+            self.roles = []
+        else:
+            self.roles = roles
+        self.is_admin = is_admin
 
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(120), nullable=False)
 
+
+
+
 class Vacancy(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    vacancy = db.relationship('Resume', backref='job_vacancy',lazy=True)
+    description = db.Column(db.String(255), nullable=False)
+    resumes = db.relationship('Resume', secondary=vacancy_resumes, lazy='subquery',backref=db.backref('vacancy_resume', lazy=True))
+    is_active = db.Column(db.Boolean(), nullable=False)
+    publication_date = db.Column(db.DateTime(timezone=True), default=func.now())
+
 
 class Skills(db.Model):
     __tablename__ = 'skills'
@@ -67,7 +78,6 @@ class Skills(db.Model):
 
 class Resume(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    job_vacancy_id = db.Column(db.Integer, db.ForeignKey('vacancy.id'))
     salary = db.Column(db.Integer(),nullable=False)
     description = db.Column(db.String(120), nullable=False)
     skills = db.relationship('Skills', secondary=job_skills, lazy='subquery', backref=db.backref('resume_skills', lazy=True))
