@@ -32,6 +32,29 @@ vacancy_resumes = db.Table(
     db.Column('resume_id', db.Integer, db.ForeignKey('resume.id'), primary_key=True)
 )
 
+class Сompany(db.Model):
+    __tablename__ = 'company'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    password = db.Column(db.String(120), nullable=False)
+    is_active = db.Column(db.Boolean(), nullable=False)
+    vacancy = db.relationship("Vacancy",backref="company",lazy='dynamic')
+
+    def __init__(self,name,description,email,password,is_active=True,vacancy=None):
+        self.name = name
+        self.description = description
+        self.email = email
+        self.password = generate_password_hash(password)
+        self.is_active = is_active
+        if not vacancy:
+            self.vacancy = []
+        else:
+            self.vacancy = vacancy
+
+
+
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -77,6 +100,7 @@ class Vacancy(db.Model):
     resumes = db.relationship('Resume', secondary=vacancy_resumes, lazy='subquery',backref=db.backref('vacancy_resume', lazy=True))
     is_active = db.Column(db.Boolean(), nullable=False)
     publication_date = db.Column(db.DateTime(timezone=True))
+    company_id = db.Column(db.Integer,db.ForeignKey("company.id"))
 
     def __init__(self,name,description,resumes=None,is_active=True,publication_date=datetime.datetime.now(IST)):
         self.name = name
