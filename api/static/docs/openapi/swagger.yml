@@ -143,8 +143,8 @@ paths:
         - BearerAuth: [ ]
       tags:
         - User
-      summary: 'Информация о резюме'
-      description: 'Получить информацию о выбранном резюме пользователя'
+      summary: 'Обновить о резюме'
+      description: 'Обновить резюме данного пользователя'
       operationId: putUserResumesDetail
       parameters:
         - name: resumesId
