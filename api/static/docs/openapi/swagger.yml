@@ -68,7 +68,121 @@ paths:
       responses:
         '201':
           description: 'Роли успешно добавлены'
-
+  /user/resumes:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Список всех резюме'
+      description: 'Получаем список резюме созданным пользователем'
+      operationId: getUserResumes
+      responses:
+        '200':
+          description: 'Список резюме'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UserResumes"
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Создание резюме'
+      description: 'Отправляем запрос для создания нового резюме'
+      operationId: SaveUserResumes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/UserResumeSave"
+      responses:
+        '201':
+          description: 'Резюме создано'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                  salary:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  publication_date:
+                    type: string
+                    format: date-time
+  /user/resumes/{resumesId}:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Информация о резюме'
+      description: 'Получить информацию о выбранном резюме пользователя'
+      operationId: getUserResumesDetail
+      parameters:
+        - name: resumesId
+          description: 'Идентификатор резюме'
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Сведения о резюме'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UserResumeDetail"
+    put:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Информация о резюме'
+      description: 'Получить информацию о выбранном резюме пользователя'
+      operationId: putUserResumesDetail
+      parameters:
+        - name: resumesId
+          description: 'Идентификатор резюме'
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/UserResumeSave"
+      responses:
+        '200':
+          description: 'Сведения о резюме'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UserResumeSave"
+    delete:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Удалить резюме'
+      description: 'Удалить выбранное резюме'
+      operationId: deleteUserResumesDetail
+      parameters:
+        - name: resumesId
+          description: 'Идентификатор резюме'
+          in: path
+          required: true
+      responses:
+        '200':
+          description: 'Резюме удален'
+        '204':
+          description: 'Резюме для удоления не найдена'
   /jwt/create:
     post:
       tags:
@@ -112,8 +226,6 @@ paths:
                     type: string
   /role:
     get:
-      security:
-        - BearerAuth: [ ]
       tags:
         - Role
       summary: 'Список всех ролей'
@@ -155,8 +267,6 @@ paths:
           description: 'Ошибка в создание роли'
   /role/{roleId} :
     get:
-      security:
-        - BearerAuth: [ ]
       tags:
         - Role
       summary: 'Информация о роли'
@@ -244,6 +354,8 @@ paths:
               schema:
                 $ref: "#components/schemas/Skills"
     post:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Skills
       summary: 'Создание навыков'
@@ -292,6 +404,8 @@ paths:
         '204':
           description: 'Навык с таким идентификатором id отсутсвует'
     put:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Skills
       summary: 'Обновить навык'
@@ -323,6 +437,8 @@ paths:
         '400':
           description: 'Ошибка в обновление навыка'
     delete:
+      security:
+        - BearerAuth: [ ]
       tags:
         - Skills
       summary: 'Удалить роль'
@@ -418,6 +534,44 @@ components:
                 type: integer
               name:
                 type: string
+    UserResumes:
+      type: array
+      items:
+        properties:
+          id:
+            type: integer
+          salary:
+            type: integer
+          title:
+            type: string
+          description:
+            type: string
+          publication_date:
+            type: string
+            format: date-time
+
+    UserResumeDetail:
+      type: object
+      properties:
+        salary:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        publication_date:
+          type: string
+          format: date-time
+    UserResumeSave:
+      type: object
+      properties:
+        salary:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+
 
   securitySchemes:
     BearerAuth:

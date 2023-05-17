@@ -1,7 +1,14 @@
+import datetime
+
 from . import db
 from werkzeug.security import generate_password_hash
-from sqlalchemy.sql import func
+
 from api import jwt
+import pytz
+
+UTC = pytz.utc
+IST = pytz.timezone('Asia/Yekaterinburg')
+
 roles_users = db.Table(
     'roles_users',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
@@ -69,9 +76,9 @@ class Vacancy(db.Model):
     description = db.Column(db.String(255), nullable=False)
     resumes = db.relationship('Resume', secondary=vacancy_resumes, lazy='subquery',backref=db.backref('vacancy_resume', lazy=True))
     is_active = db.Column(db.Boolean(), nullable=False)
-    publication_date = db.Column(db.DateTime(timezone=True), default=func.now())
+    publication_date = db.Column(db.DateTime(timezone=True))
 
-    def __init__(self,name,description,resumes=None,is_active=True,publication_date=func.now()):
+    def __init__(self,name,description,resumes=None,is_active=True,publication_date=datetime.datetime.now(IST)):
         self.name = name
         self.description = description
         if not resumes:
@@ -94,10 +101,26 @@ class Skills(db.Model):
 class Resume(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     salary = db.Column(db.Integer(),nullable=False)
+    title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.String(120), nullable=False)
     skills = db.relationship('Skills', secondary=job_skills, lazy='subquery', backref=db.backref('resume_skills', lazy=True))
-    publication_date = db.Column(db.DateTime(timezone=True),default=func.now())
+    publication_date = db.Column(db.DateTime(timezone=True))
     is_active = db.Column(db.Boolean(), nullable=False)
+
+    def __init__(self,salary,title,description,skills=None,publication_date=datetime.datetime.now(IST),is_active=True):
+        self.salary = salary
+        self.title = title
+        self.description = description
+        if not skills:
+            self.skills = []
+        else:
+            self.skills = skills
+        self.publication_date = publication_date
+        self.is_active = is_active
+
+
+
+
 
 
 @jwt.user_lookup_loader

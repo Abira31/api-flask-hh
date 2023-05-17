@@ -15,7 +15,6 @@ class UserDetailBase(UserBase):
     id : int
     is_active : bool
     roles : list[RolesBase]
-    resumes : list[ResumesBase]
     is_admin: bool
 
 
