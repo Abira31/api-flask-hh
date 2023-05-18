@@ -44,12 +44,7 @@ def has_permission_obj_user_company():
         @wraps(fn)
         def decorator(*args, **kwargs):
             if current_user.company is not None:
-                company_id = kwargs.get('id',None)
-                if company_id is not None and company_id.isdigit():
-                    if request.method == 'GET':
-                        return fn(*args, **kwargs)
-                    if current_user.company.id == int(company_id):
-                        return fn(*args, **kwargs)
+                    return fn(*args, **kwargs)
             response = make_response(
                 jsonify(msg="Компания не найдена"), 204
             )
