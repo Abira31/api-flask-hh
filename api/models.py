@@ -38,15 +38,14 @@ class Сompany(db.Model):
     name = db.Column(db.String(120), nullable=False)
     description = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    password = db.Column(db.String(120), nullable=False)
     is_active = db.Column(db.Boolean(), nullable=False)
-    vacancy = db.relationship("Vacancy",backref="company",lazy='dynamic')
+    user = db.relationship("User",backref="company",lazy='dynamic')
+    vacancy = db.relationship("Vacancy", backref="company", lazy='dynamic')
 
-    def __init__(self,name,description,email,password,is_active=True,vacancy=None):
+    def __init__(self,name,description,email,is_active=True,vacancy=None):
         self.name = name
         self.description = description
         self.email = email
-        self.password = generate_password_hash(password)
         self.is_active = is_active
         if not vacancy:
             self.vacancy = []
@@ -67,8 +66,9 @@ class User(db.Model):
     resumes = db.relationship('Resume', secondary=user_resumes, lazy='subquery', backref=db.backref('user_resumes', lazy=True))
     roles = db.relationship('Role', secondary=roles_users, lazy='subquery', backref=db.backref('user_roles', lazy=True))
     is_admin = db.Column(db.Boolean, default=False)
+    company_id = db.Column(db.Integer, db.ForeignKey("company.id"))
 
-    def __init__(self,email,password,first_name,last_name,phone,is_active=True,resumes=None,roles=None,is_admin=False):
+    def __init__(self,email,password,first_name,last_name,phone,is_active=True,resumes=None,roles=None,is_admin=False,company=None):
         self.email = email
         self.password = generate_password_hash(password)
         self.is_active = is_active
@@ -84,6 +84,10 @@ class User(db.Model):
         else:
             self.roles = roles
         self.is_admin = is_admin
+        if not company:
+            self.company = None
+        else:
+            self.company = company
 
 class Role(db.Model):
     __tablename__ = 'roles'
