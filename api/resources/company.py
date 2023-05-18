@@ -53,10 +53,7 @@ class СompanyAPI(Resource):
         company_db = current_user.company
         db.session.delete(company_db)
         db.session.commit()
-        return [],204
-
-
-
+        return [],200
     @jwt_required()
     @is_user_company()
     def post(self):

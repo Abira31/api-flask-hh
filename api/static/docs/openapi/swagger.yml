@@ -8,14 +8,16 @@ servers:
 tags:
   - name: User
     description: 'Операции, связанными с пользователем'
+  - name: Сompany
+    description: 'Операции, связанными с компанией'
   - name: Jwt
     description: 'Операции, связанными с jwt'
   - name: Role
     description: 'Операции, связанными с ролями'
   - name: Skills
     description: 'Операции, связанными с навыками'
-  - name: Vacancy
-    description: 'Операции, связанными с вакансиями'
+#  - name: Vacancy
+#    description: 'Операции, связанными с вакансиями'
 paths:
   /user:
     post:
@@ -454,6 +456,72 @@ paths:
           description: 'Навык удален'
         '204':
           description: 'Навык для удоления не найден'
+  /company:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Компания'
+      description: 'Получаем компанию которую зарегистрировал пользователь'
+      operationId: getСompany
+      responses:
+        "200":
+          description: 'Получаем компанию'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CompanyDitail"
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Создание компании'
+      description: 'Отправляем запрос для регистрации компании.Укаждого пользователя может толька быть одна компания.'
+      operationId: SaveСompany
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/CompanySave"
+      responses:
+        '200':
+          description: 'Сведения о компании'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CompanySave"
+    put:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Обновление компании'
+      description: 'Обновить информацию о выбранной компании'
+      operationId: PutСompany
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/CompanySave"
+      responses:
+        '200':
+          description: 'Компания успешна обновлена'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CompanySave"
+    delete:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      responses:
+        '200':
+          description: 'Роль удалена'
+        '204':
+          description: 'Роль для удоления не найдена'
 
 
 components:
@@ -570,6 +638,26 @@ components:
         title:
           type: string
         description:
+          type: string
+    CompanySave:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+    CompanyDitail:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        email:
           type: string
 
 
