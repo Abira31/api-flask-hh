@@ -25,12 +25,33 @@ def is_user_company():
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
+            if request.method == 'GET':
+                    return fn(*args, **kwargs)
             role_db = db.session.query(Role).select_from(join(Role, User, User.roles))\
                 .filter(Role.name == 'работодатель',User.id == current_user.id).first()
             if role_db is not None:
                 return fn(*args, **kwargs)
             response = make_response(
                 jsonify(msg="Не достаточно прав"), 403
+            )
+            response.headers["Content-Type"] = "application/json"
+            return response
+        return decorator
+    return wrapper
+
+def has_permission_obj_user_company():
+    def wrapper(fn):
+        @wraps(fn)
+        def decorator(*args, **kwargs):
+            if current_user.company is not None:
+                company_id = kwargs.get('id',None)
+                if company_id is not None and company_id.isdigit():
+                    if request.method == 'GET':
+                        return fn(*args, **kwargs)
+                    if current_user.company.id == int(company_id):
+                        return fn(*args, **kwargs)
+            response = make_response(
+                jsonify(msg="Компания не найдена"), 204
             )
             response.headers["Content-Type"] = "application/json"
             return response
