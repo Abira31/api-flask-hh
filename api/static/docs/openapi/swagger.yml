@@ -6,18 +6,19 @@ info:
 servers:
   - url: 'http://127.0.0.1:5000/api/v1/'
 tags:
-  - name: User
-    description: 'Операции, связанными с пользователем'
-  - name: Сompany
-    description: 'Операции, связанными с компанией'
   - name: Jwt
     description: 'Операции, связанными с jwt'
+  - name: User
+    description: 'Операции, связанными с пользователем'
+  - name: Company
+    description: 'Операции, связанными с компанией'
+#  - name: Vacancy
+#    description: 'Операции, связанными с вакансиями'
   - name: Role
     description: 'Операции, связанными с ролями'
   - name: Skills
     description: 'Операции, связанными с навыками'
-#  - name: Vacancy
-#    description: 'Операции, связанными с вакансиями'
+
 paths:
   /user:
     post:
@@ -185,6 +186,59 @@ paths:
           description: 'Резюме удален'
         '204':
           description: 'Резюме для удоления не найдена'
+  /search/vacancy:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Список всех вакансий'
+      description: 'Получаем список всех вакансий'
+      operationId: getVacancyAll
+      responses:
+        '200':
+          description: 'Получение пользователя'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: integer
+                    description:
+                      type: string
+  /answer/vacancy:
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      summary: 'Создание отклика'
+      description: 'Отправляем запрос для создания отклика на вакансию'
+      operationId: postAnswerVacancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                user_resume:
+                  type: integer
+                vacancy:
+                  type: integer
+        description: 'user_resume - Идентификатор резюме пользователя | vacancy - Идентификатор вакансии'
+      responses:
+        '201':
+          description: 'Отклик отправлен'
+        '200':
+          description: 'Вы уже откликнулись'
+
+
+
+
   /jwt/create:
     post:
       tags:
@@ -499,7 +553,7 @@ paths:
         - Company
       summary: 'Обновление компании'
       description: 'Обновить информацию о выбранной компании'
-      operationId: PutСompany
+      operationId: putСompany
       requestBody:
         content:
           application/json:
@@ -517,13 +571,141 @@ paths:
         - BearerAuth: [ ]
       tags:
         - Company
+      summary: 'Удалить компанию'
+      description: 'Удалить выбранную компанию'
+      operationId: deleteCompany
       responses:
         '200':
           description: 'Роль удалена'
         '204':
           description: 'Роль для удоления не найдена'
+  /company/vacancy:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Список всех вакансий'
+      description: 'Получаем список вакансий'
+      operationId: getСompanyVacancy
+      responses:
+        '200':
+          description: 'Список вакансий'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
 
-
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Создание вакансиий в компании'
+      description: 'Отправляем запрос для создание в компании вакансию'
+      operationId: PostCompanyVacancy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/VacancySave"
+      responses:
+        '201':
+          description: 'Резюме создано'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+  /company/vacancy/{vacancyId}:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Информация о вакансии'
+      description: 'Получить информацию о выбранной вакансии'
+      operationId: getСompanyVacancyDitail
+      parameters:
+        - name: vacancyId
+          description: 'Идентификатор вакансии'
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Сведениe о вакансии'
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/VacancyDitail"
+        '204':
+          description: 'Вакансия с таким идентификатором id отсутсвует'
+    put:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Обновление вакансии'
+      description: 'Обновить информацию о выбранной вакансии'
+      operationId: putСompanyVacancyDitail
+      parameters:
+        - name: vacancyId
+          description: 'Идентификатор вакансии'
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/VacancySave"
+      responses:
+        '200':
+          description: 'Вакансия успешна обновлена'
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+    delete:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Company
+      summary: 'Удалить вакансию'
+      description: 'Удалить выбранную вакансию'
+      operationId: deleteСompanyVacancyDitail
+      parameters:
+        - name: vacancyId
+          description: 'Идентификатор вакансии'
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Вакансия удалена'
+        '204':
+          description: 'Вакансии для удоления не найдена'
 components:
   schemas:
     Role:
@@ -659,6 +841,38 @@ components:
           type: string
         email:
           type: string
+    VacancySave:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    VacancyDitail:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: integer
+        description:
+          type: string
+        resumes:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              salary:
+                type: integer
+              title:
+                type: string
+        is_active:
+          type: boolean
+        publication_date:
+          type: string
+          format: date-time
+
 
 
   securitySchemes:

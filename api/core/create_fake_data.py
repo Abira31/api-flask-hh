@@ -49,7 +49,7 @@ class CreateFakeData(CreateFakeDataABC):
         db.session.commit()
 
         CreateFakeDataRoles.create()
-        CreateFakeDataVacancys.create()
+        # CreateFakeDataVacancys.create()
         CreateFakeDataSkills.create()
 
 

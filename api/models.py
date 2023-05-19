@@ -40,7 +40,7 @@ class Сompany(db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     is_active = db.Column(db.Boolean(), nullable=False)
     user = db.relationship("User",backref="company",lazy='dynamic')
-    vacancy = db.relationship("Vacancy", backref="company", lazy='dynamic')
+    vacancy = db.relationship("Vacancy",backref="company",lazy='dynamic')
 
     def __init__(self,name,description,email,is_active=True,vacancy=None):
         self.name = name
